@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div class="d-flex justify-content-around">
+      <div>
+        <h3>Students without mentor</h3>
+        <ul id="student-list" class="list-group list-group-flush"></ul>
+      </div>
+      <div>
+        <h3>Mentors</h3>
+        <ul id="mentor-list" class="list-group list-group-flush"></ul>
+      </div>
+    </div>
+
+    <form id="form-data" action="/assign-Mentor">
+      <div class="mb-3">
+        <label for="mentorName" class="form-label">Mentor name</label>
+        <input
+          type="text"
+          class="form-control"
+          id="mentorName"
+          placeholder="Enter mentor name"
+          name="mentorName"
+        />
+      </div>
+      <div class="mb-3">
+        <label for="studentNames" class="form-label">Students name</label>
+        <input
+          type="text"
+          class="form-control"
+          id="studentNames"
+          placeholder="Enter students name seperated by comma"
+          name="studentNames"
+        />
+      </div>
+
+      <button type="submit" class="btn btn-primary" onclick="send()">
+        Add mentor
+      </button>
+    </form>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script>
+      fetch("/allStudents-without-mentor")
+        .then((res) => res.json())
+        .then((data1) => {
+          const studentList = document.getElementById("student-list")
+
+          data1.forEach((student) => {
+            const studentListItem = document.createElement("li")
+            studentListItem.className = "list-group-item"
+            studentListItem.textContent = student.name
+            studentList.appendChild(studentListItem)
+          })
+        })
+
+      fetch("/allMentors")
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data)
+          const mentorList = document.getElementById("mentor-list")
+
+          data.forEach((mentor) => {
+            const mentorListItem = document.createElement("li")
+            mentorListItem.className = "list-group-item"
+            mentorListItem.textContent = mentor.name
+            mentorList.appendChild(mentorListItem)
+          })
+        })
+      function send() {
+        const form = document.getElementById("form-data")
+        form.addEventListener("submit", (e) => {
+          e.preventDefault()
+
+          const data = {
+            mentorName: e.target.mentorName.value,
+            studentNames: e.target.studentNames.value,
+          }
+
+          axios.patch("/assign-Mentor", data)
+          window.location.href='/assign-Mentor'
+        })
+      }
+    </script>
+  </body>
+</html>
